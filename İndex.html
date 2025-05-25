@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<link rel = "icon" type= "image" href = "logo.jfif">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Robotik Kodlama Projeleri</title>
+  <style>
+    /* Açılış ekranı */
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #004080;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #splash-screen img {
+      width: 950px;
+      height: 500px;
+      object-fit: cover;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      margin-bottom: 70px;
+    }
+
+    #splash-screen .bottom {
+      position: absolute;
+      bottom: 40px;
+      text-align: center;
+      color: white;
+    }
+
+    .loader-bar {
+      width: 1200px;
+      height: 12px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    .loader-bar-inner {
+      width: 0%;
+      height: 100%;
+      background: #00ffcc;
+      animation: loading 7s linear forwards;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 5px solid rgba(255,255,255,0.3);
+      border-top: 5px solid #00ffcc;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    .loading-text {
+      margin-top: 10px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes loading {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    body.day {
+      background: #f0f8ff;
+      color: #333;
+    }
+
+    body.night {
+      background: #121212;
+      color: #ddd;
+    }
+
+    header, footer {
+      background-color: #004080;
+      color: white;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .theme-toggle {
+      display: none;
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 10000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      transition: background 0.3s;
+    }
+
+    .night .theme-toggle {
+      background: #333;
+      color: #f1c40f;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #004080, #006bb3);
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      padding: 20px;
+      transition: background 0.5s, color 0.5s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.1);
+      z-index: -1;
+    }
+
+    .night .card {
+      background: linear-gradient(145deg, #1e1e1e, #333);
+      color: #eee;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      color: #fff;
+    }
+
+    .card p, .card ul, .card li {
+      font-size: 1rem;
+      color: #ddd;
+    }
+
+    .images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .images img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 10px;
+      border: 2px solid #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .images img:hover {
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin-top: 40px;
+      padding: 15px;
+      text-align: center;
+      background-color: #004080;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .images {
+        justify-content: center;
+      }
+    }
+	#scrollTopBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px; /* sol yerine sağda */
+  z-index: 999;
+  background-color: #004080;
+  color: white;
+  border: none;
+  outline: none;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: none;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  transition: background 0.3s;
+}
+
+#scrollTopBtn:hover {
+  background-color: #006bb3;
+}
+
+  </style>
+</head>
+<body class="day">
+
+  <div id="splash-screen">
+    <img src="logo.jfif" alt="Açılış Görseli">
+    <div class="bottom">
+      <div class="spinner"></div>
+      <p class="loading-text">Yükleniyor...</p>
+      <div class="loader-bar">
+        <div class="loader-bar-inner"></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="theme-toggle" id="theme-toggle">🌞</button>
+
+  <header>
+    <h1>Robotik Kodlama Projeleri</h1>
+    <p>Geleceği Şekillendiren Teknolojiler</p>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Robotik Kodlama Nedir?</h2>
+      <p>Robotik kodlama; robotları kontrol etmek, çeşitli görevleri yerine getirmelerini sağlamak için yazılım ve donanımın bir arada kullanıldığı bir disiplindir.
+        Öğrenciler bu alanda kodlama yapmayı, problem çözmeyi ve algoritma geliştirmeyi öğrenirler.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Robotik Kodlamada Kullanılan Araçlar</h2>
+      <p>
+        Robotik kodlama projelerinde hem <strong>donanım</strong> hem de <strong>yazılım</strong> araçları birlikte kullanılır. Bu araçlar, öğrencilerin mühendislik ve programlama becerilerini geliştirmesine yardımcı olur.
+      </p>
+
+      <h3>🔧 Donanım Araçları:</h3>
+      <ul>
+        <li><strong>Arduino:</strong> En çok tercih edilen mikrodenetleyicidir. Sensörler ve motorlarla kolayca entegre edilir.</li>
+        <li><strong>Raspberry Pi:</strong> Küçük bir bilgisayar olan bu kart, daha gelişmiş projelerde kullanılır.</li>
+        <li><strong>Sensörler:</strong>
+          <ul>
+            <li><em>Mesafe Sensörü (Ultrasonik):</em> Engel algılamada kullanılır.</li>
+            <li><em>Çizgi Sensörü:</em> Zemin üzerindeki çizgileri algılar.</li>
+            <li><em>IR (Kızılötesi) Sensör:</em> Engel algılama ve takip sistemlerinde görev alır.</li>
+          </ul>
+        </li>
+        <li><strong>Motorlar:</strong>
+          <ul>
+            <li><em>DC Motor:</em> Tekerlekleri döndürmek için kullanılır.</li>
+            <li><em>Servo Motor:</em> Hassas hareketler (örneğin robot kolu) için idealdir.</li>
+          </ul>
+        </li>
+        <li><strong>LED ve Buzzer:</strong> Görsel ve sesli uyarılar için kullanılır.</li>
+        <li><strong>Breadboard ve Jumper Kablolar:</strong> Devreleri kolayca kurmak için gereklidir.</li>
+      </ul>
+
+      <h3>💻 Yazılım Araçları:</h3>
+      <ul>
+        <li><strong>Arduino IDE:</strong> Arduino kartları için kod yazma ve yükleme aracıdır.</li>
+        <li><strong>mBlock / Scratch:</strong> Blok tabanlı programlama ile çocukların kolayca kodlama öğrenmesini sağlar.</li>
+        <li><strong>Tinkercad:</strong> Devre tasarımı ve simülasyon yapılabilir. Yeni başlayanlar için çok uygundur.</li>
+        <li><strong>Python:</strong> Raspberry Pi gibi kartlarla çalışırken tercih edilir.</li>
+        <li><strong>Fritzing:</strong> Devre şemaları çizmek için kullanılır.</li>
+      </ul>
+    </div>
+
+    <h1>PROJELER</h1>
+
+    <div class="card">
+      <h2>Çizgi İzleyen Robot</h2>
+      <p>Çizgi izleyen robot, zemine çizilmiş siyah ya da beyaz bir çizgiyi sensörleri yardımıyla algılayarak bu çizgiyi takip eden otonom (kendiliğinden hareket eden) bir robottur. Genellikle eğitim, yarışmalar ve endüstriyel otomasyon gibi alanlarda kullanılır.</p>
+      <div class="images">
+        <img src="IMG-20250511-WA0004.jpg" alt="Çizgi izleyen robot 1">
+        <img src="IMG-20250511-WA0005.jpg" alt="Çizgi izleyen robot 2">
+        <img src="fa.jfif" alt="Çizgi izleyen robot 3">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Engelden Kaçan Robot</h2>
+      <p>Engelden kaçan robot, önüne çıkan engelleri sensörleri yardımıyla algılayarak yönünü değiştiren, böylece çarpışmadan kaçınan otonom (kendiliğinden hareket eden) bir robottur. Genellikle eğitim, robot yarışmaları ve bazı basit otomasyon sistemlerinde kullanılır.</p>
+      <div class="images">
+        <img src="p.jpg" alt="Engelden kaçan robot 1">
+        <img src="p1.jpg" alt="Engelden kaçan robot 2">
+        <img src="tc.jfif" alt="Engelden kaçan robot 3">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Yumurta Toplayan Robot</h2>
+      <p>Yumurta toplayan robot, belirli bir alandaki yumurtaları algılayıp, dikkatli bir şekilde toplayarak belirlenen bir noktaya taşıyan otonom (kendi kendine çalışan) ya da yarı otomatik bir robottur. Bu tür robotlar genellikle tarım teknolojisi, özellikle tavuk çiftlikleri gibi alanlarda kullanılır.</p>
+      <div class="images">
+        <img src="s.jpg" alt="Yumurta toplayan robot 1">
+        <img src="s1.jpg" alt="Yumurta toplayan robot 2">
+        <img src="ty.jfif" alt="Yumurta toplayan robot 3">
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+  
+    const toggleButton = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    toggleButton.addEventListener('click', () => {
+      body.classList.toggle('night');
+      body.classList.toggle('day');
+      toggleButton.textContent = body.classList.contains('night') ? '🌙' : '🌞';
+    });
+
+    window.addEventListener("load", function () {
+      const splash = document.getElementById("splash-screen");
+      setTimeout(() => {
+        splash.style.transition = "opacity 0.5s ease";
+        splash.style.opacity = 0;
+        setTimeout(() => {
+          splash.style.display = "none";
+          toggleButton.style.display = "block";
+        }, 500);
+      }, 7000);
+    });
+	const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+window.addEventListener("scroll", function() {
+  if (window.scrollY > 300) {
+    scrollTopBtn.style.display = "block";
+  } else {
+    scrollTopBtn.style.display = "none";
+  }
+});
+
+scrollTopBtn.addEventListener("click", function() {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+});
+
+  </script>
+<div style="max-width: 400px; margin: 20px 4cm 20px auto; padding: 30px; border: 2px solid #004080; border-radius: 15px; background: #e6f2ff;">
+
+    <h3 style="text-align:center; color:#004080;">Sorunu Bildiriniz</h3>
+    <form id="contact-form">
+      <label for="name">Ad Soyad:</label><br>
+      <input type="text" id="name" name="name" required style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;"><br>
+
+      <label for="email">E-posta:</label><br>
+      <input type="email" id="email" name="email" required style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;"><br>
+
+      <label for="message">Sorunuz:</label><br>
+      <textarea id="message" name="message" rows="4" required style="width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc;"></textarea><br>
+
+      <button type="submit" style="background-color:#004080; color:white; padding:10px 20px; border:none; border-radius:10px; cursor:pointer;">Gönder</button>
+    </form>
+  </div>
+<script>
+    document.getElementById("contact-form").addEventListener("submit", function(event) {
+      event.preventDefault();  // Sayfanın yeniden yüklenmesini engeller.
+      
+      // Formu temizler
+      document.getElementById("name").value = '';
+      document.getElementById("email").value = '';
+      document.getElementById("message").value = '';
+      
+      // Kullanıcıya başarılı bir gönderim mesajı verebilirsiniz
+      alert("Mesajınız gönderildi!");
+    });
+  </script>
+<div style="max-width: 400px; margin: -450px auto 20px 4cm; padding: 62px 30px; border: 2px solid #004080; border-radius: 15px; background: #e6f2ff; min-height: 300px;">
+
+  <h3 style="text-align:center; color:#004080;">İletişim</h3>
+  <p style="font-size:16px; color:#003366;">
+    <strong>Adres:</strong><br>
+    Cumhuriyet Mah. Sanayi Cd. No.45 Alanya/Antalya
+  </p>
+  <p style="font-size:16px; color:#003366;">
+    <strong>Telefon:</strong><br>
+    0 242 515 11 08
+  </p>
+<button onclick="scrollToTop()" id="scrollToTopBtn" title="Yukarı Çık">
+  ↑
+</button>
+<style>
+#scrollToTopBtn {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 100;
+  border: none;
+  outline: none;
+  background-color: #3f51ff; /* Mavi arka plan */
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  border-radius: 50%;
+  font-size: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: none; /* Başta gizli */
+  transition: background-color 0.3s ease;
+}
+
+#scrollToTopBtn:hover {
+  background-color: #2c3ccc;
+}
+
+</style>
+<script>
+// Butonu göster/gizle
+window.onscroll = function () {
+  const btn = document.getElementById("scrollToTopBtn");
+  if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "none";
+  }
+};
+
+// Yukarı kaydırma fonksiyonu
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+</script>
+</div>
+<footer>
+    &copy; 2025 Robotik Kodlama Projeleri
+  </footer>
+</body>
+</html>
